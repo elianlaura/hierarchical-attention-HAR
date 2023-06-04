@@ -29,7 +29,7 @@ metadata_file = open('configs/metadata.yaml', mode='r')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Hierarchical Self Attention Based Autoencoder for Open-Set Human Activity Recognition')
-    parser.add_argument('--dataset', '-D', default='daphnet', help='Dataset name- options: opp, pamap2, daphhet, skoda')
+    parser.add_argument('--dataset', '-D', default='pamap2', help='Dataset name- options: opp, pamap2, daphhet, skoda')
     parser.add_argument('--use_pretrained', action='store_true', default=False, help='Use pretrained model')
     parser.add_argument('--include_openset_exp', action='store_true', default=False, help='Perform Openset Recognition')
     parser.add_argument('--save_weights', action='store_true', default=False, help='Save model parameters')
