@@ -18,7 +18,7 @@ class data_reader:
         self.save_data(output_file_name)
 
     def save_data(self, output_file_name):
-        f = h5py.File(output_file_name)
+        f = h5py.File(output_file_name, 'a')
         for key in self.data:
             f.create_group(key)
             for field in self.data[key]:

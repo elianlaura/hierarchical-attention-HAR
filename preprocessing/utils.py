@@ -101,7 +101,7 @@ def get_train_test_data(dataset, holdout=False):
                                 output_file_name, label_to_id)
 
         (train_x, train_y), (val_x, val_y), (test_x,
-                                             test_y) = preprocess_pamap2(file_path, downsample=False)
+                                             test_y) = preprocess_pamap2(file_path, print_debug=True, downsample=False)
 
         SLIDING_WINDOW_LENGTH = metadata['sliding_win_len']
         SLIDING_WINDOW_STEP = metadata['sliding_win_stride']
@@ -138,7 +138,7 @@ def get_train_test_data(dataset, holdout=False):
             X_holdout, y_holdout = create_windowed_dataset(None, None, None, X=holdout_X, y=holdout_y, window_size=SLIDING_WINDOW_LENGTH, stride = SLIDING_WINDOW_STEP)
             X_holdout = X_holdout.reshape((X_holdout.shape[0], N_WINDOW, N_TIMESTEP, 18))
             y_holdout = tf.keras.utils.to_categorical(y_holdout, num_classes=19)
-            return (X_train, y_train),  (X_test, y_test), (X_holdout, y_holdout)
+            return (X_train, y_train, y_train_mid),  (X_test, y_test, y_test_mid), (X_holdout, y_holdout)
 
         return (X_train, y_train, y_train_mid), (None, None, None),  (X_test, y_test, y_test_mid)
 

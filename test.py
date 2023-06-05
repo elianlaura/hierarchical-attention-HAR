@@ -31,7 +31,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Hierarchical Self Attention Based Autoencoder for Open-Set Human Activity Recognition')
     parser.add_argument('--dataset', '-D', default='pamap2', help='Dataset name- options: opp, pamap2, daphhet, skoda')
     parser.add_argument('--use_pretrained', action='store_true', default=False, help='Use pretrained model')
-    parser.add_argument('--include_openset_exp', action='store_true', default=False, help='Perform Openset Recognition')
+    parser.add_argument('--include_openset_exp', action='store_true', default=True, help='Perform Openset Recognition')
     parser.add_argument('--save_weights', action='store_true', default=False, help='Save model parameters')
     return parser.parse_args()
 
@@ -59,19 +59,21 @@ def test_hsa_model(dataset, use_pretrained=False, include_openset_exp=False, sav
             # if
             # model_hsa.load
     else:
-        if include_openset_exp:
-            (X_train, y_train),  (X_test, y_test), (X_holdout,
-                                                    y_holdout) = get_train_test_data(dataset=dataset, holdout=True)
-            model_hsa, model_vae = train_model(
-                dataset, (X_train, y_train), train_vae=True)
-        else:
-            (X_train, y_train, y_train_mid), (X_val, y_val, y_val_mid), (X_test, y_test, y_test_mid) = get_train_test_data(
-                dataset=dataset, holdout=False)
-            if X_val is None:
-                val_data = None
+        with tf.device('/device:GPU:0'):
+            if include_openset_exp:
+                    (X_train, y_train, y_train_mid),  (X_test, y_test, y_test_mid), (X_holdout, y_holdout) = get_train_test_data(dataset=dataset, holdout=True)
+                    model_hsa, model_vae = train_model(dataset, (X_train, y_train, y_train_mid), train_vae=True)
+
             else:
-                val_data = (X_val, y_val, y_val_mid)
-            model_hsa = train_model(dataset, (X_train, y_train, y_train_mid),  val_data=val_data)
+                (X_train, y_train, y_train_mid), (X_val, y_val, y_val_mid), (X_test, y_test, y_test_mid) = get_train_test_data(
+                    dataset=dataset, holdout=False)
+                if X_val is None:
+                    val_data = None
+                else:
+                    val_data = (X_val, y_val, y_val_mid)
+                
+                # Here if not include openset
+                model_hsa = train_model(dataset, (X_train, y_train, y_train_mid),  val_data=val_data)
 
     if save_weights:
         if not os.path.exists(os.path.join('saved_models', dataset)):
@@ -94,8 +96,13 @@ def test_hsa_model(dataset, use_pretrained=False, include_openset_exp=False, sav
         print()
 
     activity_names = list(activity_map.values())
+    print()
     print("Window level:")
-    print(classification_report(np.argmax(y_test_mid.reshape(-1, 2), axis=1), np.argmax(pred_mid.reshape(-1, 2), axis=1), labels=range(len(activity_names)), target_names=activity_names, zero_division=1))
+    if include_openset_exp:
+        y_test_mid = y_test_mid[0:-1,:,:]
+        pred_mid = pred_mid[0:-1,:,:]
+    re1 = y_test_mid.reshape(-1, 2)
+    print(classification_report(np.argmax(re1, axis=1), np.argmax(pred_mid.reshape(-1, 2), axis=1), labels=range(len(activity_names)), target_names=activity_names, zero_division=1))
     confm = confusion_matrix(np.argmax(y_test_mid.reshape(-1, y_test.shape[1]), axis=1), np.argmax(pred_mid.reshape(-1, y_test.shape[1]), axis=1), labels=range(len(activity_names)))
     print(confm)
 

@@ -11,7 +11,7 @@ HSA_model:
     dff: 256
     d_model: 64
     num_heads: 4
-    dropout_rate: 0.2
+    dropout_rate: 0.4
     epochs: 1
     batch_size: 64
     val_split: 0.1
@@ -51,7 +51,7 @@ HSA_model:
 
 train:
   batch_size: 64
-  epochs: 100
+  epochs: 1
   val_split: 0.1
   learning_rate: 0.001
 

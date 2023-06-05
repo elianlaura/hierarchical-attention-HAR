@@ -95,7 +95,7 @@ class HSA_model_session_guided_window():
     def get_compiled_model(self, lr=0.001):
         model = self.get_model()
         losses = {'session_pred': tf.keras.losses.CategoricalCrossentropy() , 'window_pred':tf.keras.losses.CategoricalCrossentropy() }
-        model.compile(loss=losses, optimizer=tf.keras.optimizers.Adam(lr=lr), metrics=['accuracy'])
+        model.compile(loss=losses, optimizer=tf.keras.optimizers.Adam(learning_rate=lr), metrics=['accuracy'])
         return model
 
 
