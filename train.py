@@ -44,9 +44,13 @@ def train_model(dataset, train_data, val_data =None, train_vae=False, train_hsa=
         #               ['batch_size'], verbose=2, validation_split=hyperparameters['train']['val_split'])'
     
         if val_data != None:
-            hsa_model.fit(X_train, [y_train_mid, y_train], batch_size= batch_size, epochs=epochs, validation_data=(X_val, [y_val_mid, y_val]), use_multiprocessing=False)
+            hsa_model.fit(X_train, [y_train_mid, y_train], 
+                          batch_size= batch_size, epochs=epochs, 
+                          validation_data=(X_val, [y_val_mid, y_val]), use_multiprocessing=False)
         else:
-            hsa_model.fit(X_train, [y_train_mid, y_train], batch_size= batch_size, epochs=epochs, validation_split=val_split, use_multiprocessing=False)
+            hsa_model.fit(X_train, [y_train_mid, y_train], 
+                          batch_size= batch_size, epochs=epochs, 
+                          validation_split=val_split, use_multiprocessing=False)
 
     if not train_vae:
         return hsa_model

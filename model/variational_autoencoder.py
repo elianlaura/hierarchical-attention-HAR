@@ -79,8 +79,8 @@ class VariationalAutoEncoder(tf.keras.Model):
 
     def train_step(self, data):
         with tf.GradientTape() as tape:
-            data, _ = self.base_model(data)
-            z_mean, z_log_var, z = self.encoder(data)
+            data, _ = self.base_model(data) #data None,15,11,18
+            z_mean, z_log_var, z = self.encoder(data) # data None,64
             reconstructed = self.decoder(z)
 
             kl_loss = -0.5 * \
